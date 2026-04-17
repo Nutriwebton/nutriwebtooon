@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dieta para Anemia Personalizada</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      background: linear-gradient(135deg, #f6e8b1, #f0d97d);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      height: 700px;
+      background: #ffffffdd;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      backdrop-filter: saturate(180%) blur(20px);
+    }
+    .chat-header {
+      background: #4caf50;
+      color: white;
+      padding: 25px 30px;
+      font-weight: 600;
+      font-size: 1.6rem;
+      text-align: center;
+      letter-spacing: 1.2px;
+      user-select: none;
+    }
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 25px;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .message {
+      max-width: 75%;
+      padding: 15px 20px;
+      border-radius: 25px;
+      line-height: 1.4;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      white-space: pre-wrap;
+      font-size: 1rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .bot {
+      background: #e0f2d9;
+      align-self: flex-start;
+      color: #2e7d32;
+    }
+    .bot img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 5px #4caf50;
+    }
+    .user {
+      background: #4caf50;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 5px;
+      border-bottom-left-radius: 25px;
+      border-top-left-radius: 25px;
+      border-top-right-radius: 25px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(76,175,80,0.4);
+    }
+    .input-area {
+      padding: 15px 20px;
+      background: #ffffffcc;
+      display: flex;
+      gap: 12px;
+      border-top: 1px solid #ddd;
+    }
+    input[type="text"] {
+      flex: 1;
+      border: 2px solid #4caf50;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      outline-offset: 2px;
+      transition: border-color 0.3s ease;
+      box-shadow: inset 0 1px 3px #c4e1a1;
+    }
+    input[type="text"]:focus {
+      border-color: #2e7d32;
+      box-shadow: 0 0 8px #2e7d32;
+    }
+    button {
+      background-color: #4caf50;
+      border: none;
+      border-radius: 50px;
+      padding: 0 25px;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(76,175,80,0.6);
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #388e3c;
+      box-shadow: 0 6px 20px rgba(56,142,60,0.8);
+    }
+    /* Scrollbar */
+    .messages::-webkit-scrollbar {
+      width: 8px;
+    }
+    .messages::-webkit-scrollbar-thumb {
+      background-color: #a5d6a7;
+      border-radius: 10px;
+    }
+    .messages::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container" role="main" aria-label="Chat Asistente Dieta para Anemia">
+    <header class="chat-header">Asistente de Dieta para Anemia</header>
+    <div class="messages" id="chat" aria-live="polite" aria-atomic="false"></div>
+    <form class="input-area" onsubmit="event.preventDefault(); handleUserInput();">
+      <input type="text" id="userInput" placeholder="Escribe tu respuesta..." aria-label="Entrada de usuario para responder al asistente" autocomplete="off" />
+      <button type="submit" aria-label="Enviar mensaje">Enviar</button>
+    </form>
+  </div>
+
+  <script>
+    const ingredients = [
+      {
+        name: "espinaca",
+        recipes: [
+          {
+            title: "Ensalada de garbanzos con espinaca",
+            items: ["1 taza de espinaca", "1/2 taza de garbanzos cocidos", "Tomate, aceite de oliva, sal"],
+            steps: ["Lavar la espinaca y el tomate.", "Mezclar con garbanzos cocidos.", "Agregar aceite de oliva y sal."]
+          },
+          {
+            title: "Batido de espinaca y plátano",
+            items: ["1 taza de espinaca", "1 plátano maduro", "1 taza de leche vegetal o agua"],
+            steps: ["Colocar todo en la licuadora.", "Licuar hasta que quede suave.", "Servir frío."]
+          }
+        ]
+      },
+      {
+        name: "hígado",
+        recipes: [
+          {
+            title: "Hígado encebollado",
+            items: ["200g de hígado", "1 cebolla", "Sal, pimienta, aceite de oliva"],
+            steps: ["Cortar la cebolla en tiras.", "Sofreír la cebolla y agregar el hígado en tiras.", "Cocinar hasta dorar."]
+          },
+          {
+            title: "Tacos de hígado con ajo",
+            items: ["200g de hígado", "3 dientes de ajo", "Tortillas, cilantro"],
+            steps: ["Sofreír ajo picado.", "Agregar el hígado y dorar.", "Servir en tortillas con cilantro."]
+          }
+        ]
+      },
+      {
+        name: "lentejas",
+        recipes: [
+          {
+            title: "Lentejas estofadas",
+            items: ["1 taza de lentejas", "Zanahoria, cebolla, pimiento", "Aceite, sal, comino"],
+            steps: ["Rehogar verduras.", "Agregar lentejas y agua.", "Cocinar a fuego lento 40 minutos."]
+          },
+          {
+            title: "Hamburguesas de lentejas",
+            items: ["1 taza de lentejas cocidas", "Pan rallado, cebolla, huevo"],
+            steps: ["Triturar las lentejas.", "Mezclar con ingredientes.", "Formar hamburguesas y cocinar."]
+          }
+        ]
+      },
+      {
+        name: "remolacha",
+        recipes: [
+          {
+            title: "Jugo de remolacha",
+            items: ["1 remolacha mediana", "1 manzana", "Jugo de limón"],
+            steps: ["Lavar y pelar la remolacha.", "Licuar con manzana y jugo de limón.", "Servir frío."]
+          },
+          {
+            title: "Ensalada de remolacha con huevo",
+            items: ["1 remolacha cocida", "2 huevos duros", "Aceite de oliva, sal"],
+            steps: ["Picar la remolacha y los huevos.", "Mezclar y aliñar con aceite y sal.", "Servir fresca."]
+          }
+        ]
+      },
+      {
+        name: "brócoli",
+        recipes: [
+          {
+            title: "Brócoli al vapor con limón",
+            items: ["1 cabeza de brócoli", "Jugo de limón", "Sal y pimienta"],
+            steps: ["Cocinar el brócoli al vapor.", "Agregar jugo de limón, sal y pimienta al gusto.", "Servir caliente."]
+          },
+          {
+            title: "Salteado de brócoli con pollo",
+            items: ["Brócoli", "Pechuga de pollo", "Ajo, aceite, salsa de soja"],
+            steps: ["Saltear ajo y pollo.", "Agregar brócoli y salsa de soja.", "Cocinar hasta que el brócoli esté tierno."]
+          }
+        ]
+      },
+      {
+        name: "acelga",
+        recipes: [
+          {
+            title: "Tortilla de acelga",
+            items: ["Acelga picada", "3 huevos", "Sal y pimienta"],
+            steps: ["Batir huevos.", "Agregar acelga picada.", "Cocinar en sartén hasta dorar."]
+          },
+          {
+            title: "Salteado de acelga con ajo",
+            items: ["Acelga", "Ajo picado", "Aceite de oliva"],
+            steps: ["Saltear ajo en aceite.", "Agregar acelga y cocinar rápido.", "Servir caliente."]
+          }
+        ]
+      },
+      {
+        name: "huevo",
+        recipes: [
+          {
+            title: "Huevos revueltos con espinaca",
+            items: ["2 huevos", "Espinaca picada", "Sal y pimienta"],
+            steps: ["Batir huevos con espinaca.", "Cocinar en sartén.", "Servir caliente."]
+          },
+          {
+            title: "Tortilla española",
+            items: ["3 huevos", "Patata", "Cebolla", "Aceite y sal"],
+            steps: ["Freír patata y cebolla.", "Batir huevos y mezclar.", "Cocinar hasta cuajar."]
+          }
+        ]
+      },
+      {
+        name: "quinoa",
+        recipes: [
+          {
+            title: "Ensalada de quinoa con vegetales",
+            items: ["Quinoa cocida", "Tomate, pepino, cebolla", "Aceite, limón y sal"],
+            steps: ["Cocinar quinoa y dejar enfriar.", "Picar vegetales.", "Mezclar todo y aliñar."]
+          },
+          {
+            title: "Quinoa con brócoli y pollo",
+            items: ["Quinoa", "Brócoli", "Pechuga de pollo", "Aceite y especias"],
+            steps: ["Cocer quinoa y brócoli.", "Saltear pollo.", "Mezclar y servir."]
+          }
+        ]
+      }
+    ];
+
+    const anemiaPriority = {
+      severa: ["hígado", "acelga", "almejas", "carne roja", "espinaca", "remolacha", "lentejas", "brócoli", "huevo", "quinoa"],
+      moderada: ["espinaca", "lentejas", "remolacha", "brócoli", "acelga", "huevo", "quinoa", "carne roja", "almejas", "hígado"],
+      leve: ["brócoli", "acelga", "quinoa", "huevo", "lentejas", "remolacha", "espinaca", "carne roja", "almejas", "hígado"]
+    };
+
+    let step = 0;
+    let age, weight, anemiaLevel;
+    let currentIngredient = 0;
+    let dislikedIngredients = [];
+    let selectedIngredientsOrder = [];
+
+    const chatBox = document.getElementById("chat");
+
+    function addMessage(text, sender) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = `message ${sender}`;
+
+      if (sender === "bot") {
+        const botIcon = document.createElement("img");
+        botIcon.src = "https://i.pinimg.com/474x/58/8d/8f/588d8f9e83ce526a471b7c09073d7128.jpg?nii=t";
+        botIcon.alt = "Bot";
+        messageDiv.appendChild(botIcon);
+      }
+
+      const textNode = document.createTextNode(text);
+      messageDiv.appendChild(textNode);
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function startChat() {
+      addMessage("Hola! Soy tu asistente para crear una dieta especial para la anemia.", "bot");
+      setTimeout(() => {
+        addMessage("Primero, ¿cuántos años tienes?", "bot");
+      }, 1000);
+    }
+
+    function handleUserInput() {
+      const input = document.getElementById("userInput").value.trim();
+      if (!input) return;
+      addMessage(input, "user");
+      document.getElementById("userInput").value = "";
+
+      if (step === 0) {
+        age = parseInt(input);
+        if (isNaN(age) || age <= 0) {
+          addMessage("Por favor, ingresa un número válido para la edad.", "bot");
+          return;
+        }
+        step++;
+        setTimeout(() => {
+          addMessage("¿Cuánto pesas (en kg)?", "bot");
+        }, 500);
+      } else if (step === 1) {
+        weight = parseFloat(input);
+        if (isNaN(weight) || weight <= 0) {
+          addMessage("Por favor, ingresa un número válido para el peso.", "bot");
+          return;
+        }
+        step++;
+        setTimeout(() => {
+          addMessage("¿Cuál es tu nivel de anemia? (leve, moderada o severa)", "bot");
+        }, 500);
+      } else if (step === 2) {
+        anemiaLevel = input.toLowerCase();
+        if (!["leve", "moderada", "severa"].includes(anemiaLevel)) {
+          addMessage("Por favor, escribe 'leve', 'moderada' o 'severa'.", "bot");
+          return;
+        }
+        step++;
+        selectedIngredientsOrder = anemiaPriority[anemiaLevel];
+        currentIngredient = 0;
+        dislikedIngredients = [];
+        setTimeout(() => {
+          askNextIngredient();
+        }, 700);
+      } else if (step >= 3) {
+        if (input.toLowerCase() === "no") {
+          dislikedIngredients.push(selectedIngredientsOrder[currentIngredient]);
+        }
+        currentIngredient++;
+        setTimeout(() => {
+          askNextIngredient();
+        }, 500);
+      }
+    }
+
+    function askNextIngredient() {
+      if (currentIngredient < selectedIngredientsOrder.length) {
+        addMessage(`¿Te gusta la ${selectedIngredientsOrder[currentIngredient]}? (sí / no)`, "bot");
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      const levelMsg = {
+        leve: "Tu nivel de anemia es leve. Con algunos ajustes en tu alimentación podrás mejorar rápidamente.",
+        moderada: "Tu nivel de anemia es moderado. Necesitas una dieta rica en hierro y nutrientes.",
+        severa: "Tu nivel de anemia es severo. Es muy importante seguir una dieta estricta y consultar con un especialista."
+      };
+
+      addMessage(`Edad: ${age} años. Peso: ${weight} kg. Nivel de anemia: ${anemiaLevel}.`, "bot");
+      addMessage(levelMsg[anemiaLevel], "bot");
+
+      const likedIngredients = ingredients.filter(ing => !dislikedIngredients.includes(ing.name));
+
+      if (likedIngredients.length === 0) {
+        addMessage("No seleccionaste ningún ingrediente preferido, te recomiendo consultar con un especialista para un plan personalizado.", "bot");
+        return;
+      }
+
+      addMessage("Aquí tienes recetas personalizadas con los ingredientes que te gustan:", "bot");
+
+      let delay = 0;
+      likedIngredients.forEach(ingredient => {
+        ingredient.recipes.forEach(recipe => {
+          delay += 1000;
+          setTimeout(() => {
+            const recipeText = `🍽️ ${recipe.title}\n\nIngredientes:\n- ${recipe.items.join("\n- ")}\n\nPreparación:\n${recipe.steps.map((step, i) => `${i + 1}. ${step}`).join("\n")}`;
+            addMessage(recipeText, "bot");
+          }, delay);
+          delay += 1500;
+        });
+      });
+
+      setTimeout(() => {
+        addMessage("¡Espero que disfrutes estas recetas y te ayuden a mejorar tu anemia!", "bot");
+      }, delay + 1000);
+    }
+
+    document.getElementById("userInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        handleUserInput();
+      }
+    });
+
+    startChat();
+  </script>
+</body>
+</html>
